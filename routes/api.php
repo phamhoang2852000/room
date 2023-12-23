@@ -6,6 +6,7 @@ use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomTypeController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MethodController;
+use App\Http\Controllers\CheckinoutController;
 
 
 /*
@@ -27,3 +28,4 @@ Route::resource('rooms', RoomController::class);
 Route::resource('room-types', RoomTypeController::class);
 Route::resource('customers', CustomerController::class);
 Route::resource('method', MethodController::class);
+Route::resource('check-in-out', CheckinoutController::class);
