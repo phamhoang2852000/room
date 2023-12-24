@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Checkinout;
 use App\Models\Price;
+use App\Models\BookingRoom;
 
 class Room extends Model
 {
@@ -21,5 +22,9 @@ class Room extends Model
 
     public function price() {
         return $this->hasOne(Price::class);
+    }
+
+    public function booking_room() {
+        return $this->hasMany(BookingRoom::class);
     }
 }

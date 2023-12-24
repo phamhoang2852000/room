@@ -8,6 +8,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\MethodController;
 use App\Http\Controllers\CheckinoutController;
 use App\Http\Controllers\PriceController;
+use App\Http\Controllers\BookingRoomController;
 
 
 /*
@@ -31,3 +32,4 @@ Route::resource('customers', CustomerController::class);
 Route::resource('method', MethodController::class);
 Route::resource('check-in-out', CheckinoutController::class);
 Route::resource('price', PriceController::class);
+Route::resource('booking-room', BookingRoomController::class);
