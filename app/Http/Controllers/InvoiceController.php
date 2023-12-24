@@ -3,19 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Checkinout;
+use App\Models\Invoice;
 use App\Models\Customer;
-use App\Models\Room;
 
-
-class CheckinoutController extends Controller
+class InvoiceController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Checkinout::paginate(10);
+        return Invoice::orderByDesc('id')->paginate(10);
     }
 
     /**
@@ -23,7 +21,7 @@ class CheckinoutController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
@@ -40,34 +38,31 @@ class CheckinoutController extends Controller
                 ], 400);
             }
 
-            $room_id = $request->room_id;
-            if (!(Room::where('id', $room_id)->exists())) {
+            if ((Invoice::where('checkinout_id', $request->checkinout_id)->exists())) {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Phòng này không tồn tại'
+                    'message' => 'Hóa đơn đã tồn tại'
                 ], 400);
             }
 
-            $check_in_out = new Checkinout;
-            $check_in_out->room_id = $room_id;
-            $check_in_out->customer_id = Customer::where('email', $email)->first()->id;
-            $check_in_out->check_in = $request->check_in;
-            $check_in_out->price = $request->price;
-            $check_in_out->save();
-            $room = Room::find($room_id);
-            $room->is_active = true;
-            $room->save();
+            $new_invoice = new Invoice;
+            $new_invoice->customer_id = Customer::where('email', $email)->first()->id;
+            $new_invoice->method_id = $request->method_id;
+            $new_invoice->checkinout_id = $request->checkinout_id;
+            $new_invoice->is_payed = $request->is_payed;
+            $new_invoice->note = $request->note;
+            $new_invoice->save();
+
             return response()->json([
                 'status' => 'success',
-                'message' => 'Tạo thời gian checkin thành công'
+                'message' => 'Tạo hóa đơn thành công'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'status' => 'error',
+                'status' => 'success',
                 'message' => $e->getMessage()
             ], 500);
         }
-
     }
 
     /**
@@ -75,14 +70,15 @@ class CheckinoutController extends Controller
      */
     public function show(string $id)
     {
-        $check_in_out = Checkinout::find($id);
-        if (!$check_in_out) {
+        $invoice = Invoice::find($id);
+        if (!$invoice) {
             return response()->json([
                 'status' => 'not found',
-                'message' => 'Thời gian check in/out không tồn tại',
+                'message' => 'hóa đơn thanh toán không tồn tại',
             ], 404);
         }
-        return $check_in_out;
+
+        return $invoice;
     }
 
     /**
@@ -98,22 +94,23 @@ class CheckinoutController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $check_in_out = Checkinout::find($id);
-        if (!$check_in_out) {
+        $invoice = Invoice::find($id);
+        if (!$invoice) {
             return response()->json([
                 'status' => 'not found',
-                'message' => 'Thời gian check in/out không tồn tại',
+                'message' => 'hóa đơn thanh toán không tồn tại',
             ], 404);
         }
 
-        $check_in_out->check_out = $request->check_out;
-        $check_in_out->save();
-        $room = Room::find($check_in_out->room_id);
-        $room->is_active = false;
-        $room->save();
+        $invoice->method_id = $request->method_id;
+        $invoice->checkinout_id = $request->checkinout_id;
+        $invoice->note = $request->note;
+        $invoice->is_payed = $request->is_payed;
+        $invoice->save();
+
         return response()->json([
             'status' => 'success',
-            'message' => 'Cập nhật Checkout thành công',
+            'message' => 'Cập nhật hóa đơn thanh toán thành công',
         ], 200);
     }
 
@@ -122,6 +119,17 @@ class CheckinoutController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $invoice = Invoice::find($id);
+        if (!$invoice) {
+            return response()->json([
+                'status' => 'not found',
+                'message' => 'hóa đơn thanh toán không tồn tại',
+            ], 404);
+        }
+        $invoice->delete();
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Xóa hóa đơn thanh toán thành công'
+        ], 200);
     }
 }

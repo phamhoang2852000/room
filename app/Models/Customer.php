@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Checkinout;
 use App\Models\BookingRoom;
+use App\Models\Invoice;
 
 
 class Customer extends Model
@@ -18,5 +19,9 @@ class Customer extends Model
 
     public function booking_room() {
         return $this->hasMany(BookingRoom::class);
+    }
+
+    public function invoice() {
+        return $this->hasMany(Invoice::class);
     }
 }
