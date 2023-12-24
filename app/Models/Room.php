@@ -5,6 +5,7 @@ use App\Models\RoomType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Checkinout;
+use App\Models\Price;
 
 class Room extends Model
 {
@@ -16,5 +17,9 @@ class Room extends Model
 
     public function checkin_out() {
         return $this->hasMany(Checkinout::class);
+    }
+
+    public function price() {
+        return $this->hasOne(Price::class);
     }
 }

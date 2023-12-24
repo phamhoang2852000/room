@@ -3,19 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Checkinout;
-use App\Models\Customer;
+use App\Models\Price;
 use App\Models\Room;
 
-
-class CheckinoutController extends Controller
+class PriceController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return Checkinout::paginate(10);
+        return Price::with('room')->paginate(10);
     }
 
     /**
@@ -32,33 +30,31 @@ class CheckinoutController extends Controller
     public function store(Request $request)
     {
         try {
-            $email = $request->email;
-            if (!(Customer::where('email', $email)->exists())) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Khách hàng này không tồn tại'
-                ], 400);
-            }
-
+            $new_price = new Price;
             $room_id = $request->room_id;
-            if (!(Room::where('id', $room_id)->exists())) {
+
+            if (Room::where('id', $room_id)->exists()) {
+                $new_price->room_id = $room_id;
+            } else {
                 return response()->json([
                     'status' => 'error',
-                    'message' => 'Phòng này không tồn tại'
+                    'message' => 'Không có room này'
                 ], 400);
             }
 
-            $check_in_out = new Checkinout;
-            $check_in_out->room_id = $room_id;
-            $check_in_out->customer_id = Customer::where('email', $email)->first()->id;
-            $check_in_out->check_in = $request->check_in;
-            $check_in_out->save();
-            $room = Room::find($room_id);
-            $room->is_active = true;
-            $room->save();
+            if (Price::where('room_id', $room_id)->exists()) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Giá phòng này đã có'
+                ], 400);
+            }
+
+            $new_price->price = $request->price;
+            $new_price->save();
+
             return response()->json([
                 'status' => 'success',
-                'message' => 'Tạo thời gian checkin thành công'
+                'message' => 'Thêm mới giá phòng thành công'
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -66,7 +62,6 @@ class CheckinoutController extends Controller
                 'message' => $e->getMessage()
             ], 500);
         }
-
     }
 
     /**
@@ -74,14 +69,14 @@ class CheckinoutController extends Controller
      */
     public function show(string $id)
     {
-        $check_in_out = Checkinout::find($id);
-        if (!$check_in_out) {
+        $price = Price::with('room')->find($id);
+        if (!$price) {
             return response()->json([
                 'status' => 'not found',
-                'message' => 'Thời gian check in/out không tồn tại',
+                'message' => 'price room not found',
             ], 404);
         }
-        return $check_in_out;
+        return $price;
     }
 
     /**
@@ -97,22 +92,20 @@ class CheckinoutController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $check_in_out = Checkinout::find($id);
-        if (!$check_in_out) {
+        $price = Price::with('room')->find($id);
+        if (!$price) {
             return response()->json([
                 'status' => 'not found',
-                'message' => 'Thời gian check in/out không tồn tại',
+                'message' => 'price room not found',
             ], 404);
         }
+        
+        $price->price = $request->price;
+        $price->save();
 
-        $check_in_out->check_out = $request->check_out;
-        $check_in_out->save();
-        $room = Room::find($check_in_out->room_id);
-        $room->is_active = false;
-        $room->save();
         return response()->json([
             'status' => 'success',
-            'message' => 'Cập nhật Checkout thành công',
+            'message' => 'Cập nhật giá phòng thành công',
         ], 200);
     }
 
@@ -121,6 +114,19 @@ class CheckinoutController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $price = Price::find($id);
+        if (!$price) {
+            return response()->json([
+                'status' => 'not found',
+                'message' => 'price room not found',
+            ], 404);
+        }
+
+        $price->delete();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Xóa giá phòng thành công'
+        ], 200);
     }
 }
