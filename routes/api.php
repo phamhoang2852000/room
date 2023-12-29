@@ -5,10 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomTypeController;
 use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\MethodController;
 use App\Http\Controllers\CheckinoutController;
 use App\Http\Controllers\PriceController;
-use App\Http\Controllers\BookingRoomController;
 use App\Http\Controllers\InvoiceController;
 
 
@@ -30,8 +28,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::resource('rooms', RoomController::class);
 Route::resource('room-types', RoomTypeController::class);
 Route::resource('customers', CustomerController::class);
-Route::resource('method', MethodController::class);
 Route::resource('check-in-out', CheckinoutController::class);
 Route::resource('price', PriceController::class);
-Route::resource('booking-room', BookingRoomController::class);
 Route::resource('invoices', InvoiceController::class);

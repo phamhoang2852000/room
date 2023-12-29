@@ -47,7 +47,6 @@ class InvoiceController extends Controller
 
             $new_invoice = new Invoice;
             $new_invoice->customer_id = Customer::where('email', $email)->first()->id;
-            $new_invoice->method_id = $request->method_id;
             $new_invoice->checkinout_id = $request->checkinout_id;
             $new_invoice->is_payed = $request->is_payed;
             $new_invoice->note = $request->note;
