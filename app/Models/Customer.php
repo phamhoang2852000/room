@@ -17,6 +17,10 @@ class Customer extends Model
         return $this->hasMany(Checkinout::class);
     }
 
+    public function booking_room() {
+        return $this->hasMany(BookingRoom::class);
+    }
+
     public function invoice() {
         return $this->hasMany(Invoice::class);
     }
