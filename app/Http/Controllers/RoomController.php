@@ -34,6 +34,7 @@ class RoomController extends Controller
             $new_room = new Room;
             $new_room->name = $request->name;
             $room_type_id = $request->room_type_id;
+            $new_room->price = $request->price;
 
             if (RoomType::where('id', $room_type_id)->exists()) {
                 $new_room->room_type_id = $request->room_type_id;

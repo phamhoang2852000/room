@@ -15,7 +15,7 @@ class CheckinoutController extends Controller
      */
     public function index()
     {
-        return Checkinout::paginate(10);
+        return Checkinout::with('room')->paginate(10);
     }
 
     /**
@@ -52,7 +52,6 @@ class CheckinoutController extends Controller
             $check_in_out->room_id = $room_id;
             $check_in_out->customer_id = Customer::where('email', $email)->first()->id;
             $check_in_out->check_in = $request->check_in;
-            $check_in_out->price = $request->price;
             $check_in_out->save();
             $room = Room::find($room_id);
             $room->is_active = true;

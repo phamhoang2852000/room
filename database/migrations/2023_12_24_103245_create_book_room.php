@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->integer('room_id');
             $table->integer('customer_id');
-            $table->float('price');
             $table->timestamp('check_in_date')->nullable();
             $table->timestamp('check_out_date')->nullable();
             $table->timestamp('booking_date')->nullable();

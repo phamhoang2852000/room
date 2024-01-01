@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\BookingRoom;
-use App\Models\Price;
 use App\Models\Customer;
 use App\Models\Room;
 
@@ -50,13 +49,6 @@ class BookingRoomController extends Controller
                 ], 400);
             }
 
-            if (!(Price::where('room_id', $room_id)->exists())) {
-                return response()->json([
-                    'status' => 'error',
-                    'message' => 'Gía phòng này không tồn tại'
-                ], 400);
-            }
-
             $check_in_date = $request->input('check_in_date');
             $check_out_date = $request->input('check_out_date');
 
@@ -78,10 +70,8 @@ class BookingRoomController extends Controller
                 ], 400);
             }
             $customer_id = Customer::where('email', $email)->first()->id;
-            $price = Price::where('room_id', $room_id)->first()->price;
             $new_book->room_id = $room_id;
             $new_book->customer_id = $customer_id;
-            $new_book->price = $price;
             $new_book->booking_date = now();
             $new_book->check_in_date = $check_in_date;
             $new_book->check_out_date = $check_out_date;
@@ -158,8 +148,6 @@ class BookingRoomController extends Controller
 
         $book_room->check_in_date = $check_in_date;
         $book_room->check_out_date = $check_out_date;
-        $price = Price::where('room_id', $book_room->room_id)->first()->price;
-        $book_room->price = $price;
         $book_room->booking_date = now();
         $book_room->save();
 

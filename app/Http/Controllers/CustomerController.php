@@ -30,11 +30,6 @@ class CustomerController extends Controller
     {
         try{
             $new_customer = new Customer;
-            do {
-                $id = mt_rand(10000000, 99999999);
-                $new_customer->id = $id;
-            } while (!is_null(Customer::find($id)));
-
             $email = $request->email;
             if (Customer::where('email', $email)->exists()) {
                 return response()->json([

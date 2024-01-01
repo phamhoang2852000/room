@@ -17,10 +17,6 @@ class Invoice extends Model
         return $this->belongsTo(Customer::class);
     }
 
-    public function method() {
-        return $this->belongsTo(Method::class);
-    }
-
     public function checkinout() {
         return $this->belongsTo(Checkinout::class);
     }
